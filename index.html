@@ -34,6 +34,22 @@
       align-items: center;
     }
 
+    .titulo-columna {
+      font-weight: bold;
+      color: #1b5e20;
+      text-align: center;
+      grid-column: span 3;
+      display: grid;
+      grid-template-columns: 300px 60px 300px;
+      margin-bottom: 10px;
+    }
+
+    .titulo-columna div {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+    }
+
     .item, .drop {
       padding: 10px;
       background-color: #ffffff;
@@ -60,11 +76,16 @@
     }
 
     #resultado {
-      text-align: center;
       margin-top: 30px;
-      font-weight: bold;
-      font-size: 18px;
+      padding: 15px 25px;
+      background-color: #c8e6c9;
       color: #1b5e20;
+      border: 2px solid #2e7d32;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
     }
   </style>
 </head>
@@ -72,6 +93,12 @@
   <header>
     <h1>Arrastrá cada residuo a su categoría correspondiente</h1>
   </header>
+
+  <div class="titulo-columna">
+    <div>Residuos</div>
+    <div></div>
+    <div>Corrientes Y</div>
+  </div>
 
   <div class="contenedor">
     <div class="item" draggable="true" id="res_pinturas">Pinturas</div>
