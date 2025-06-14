@@ -5,16 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Juego de Residuos y Corrientes</title>
   <style>
-    body { font-family: sans-serif; background: linear-gradient(to bottom right, #e6f4ea, #d0f0ff); margin: 0; padding: 20px;}
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to bottom right, #e6f4ea, #d0f0ff);
+      margin: 0;
+      padding: 20px;
+    }
     header { text-align: center; margin-bottom: 20px;}
-    h1 { color: #2e7d32; font-size: 22px; margin-top: 10px;}
-    #timer { text-align: center; font-size: 24px; font-weight: bold; color: #1b5e20; margin-bottom: 15px;}
-    .contenedor { display: flex; justify-content: space-between; flex-wrap: wrap; width: 100%; max-width: 1000px; margin: auto;}
-    .columna { display: flex; flex-direction: column; gap: 10px; width: 45%;}
-    .titulo-columna { text-align: center; font-weight: bold; color: #1b5e20; font-size: 18px; margin-bottom: 8px; letter-spacing: 1px;}
-    .item, .drop { width: 100%; min-height: 48px; padding: 12px; background-color: #fff; border: 2px solid #a5d6a7; border-radius: 6px; cursor: grab; text-align: center; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); box-sizing: border-box; font-size: 16px; transition: background 0.2s, border-color 0.2s, transform 0.2s; user-select: none;}
-    .item:active { transform: scale(1.05); background: #e0f7fa;}
+    h1 {
+      color: #2e7d32;
+      font-size: 22px;
+      margin-top: 10px;
+      margin-bottom: 10px;
+    }
+    #timer {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      color: #1b5e20;
+      margin-bottom: 15px;
+    }
+    .contenedor {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+      max-width: 540px;
+      margin: auto;
+      align-items: start;
+      overflow-x: visible;
+    }
+    .columna {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+    .titulo-columna {
+      text-align: center;
+      font-weight: bold;
+      color: #1b5e20;
+      font-size: 18px;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+    }
+    .item, .drop {
+      width: 100%;
+      min-height: 48px;
+      padding: 12px;
+      background-color: #fff;
+      border: 2px solid #a5d6a7;
+      border-radius: 6px;
+      cursor: grab;
+      text-align: center;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+      font-size: 16px;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      user-select: none;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      word-break: break-word;
+    }
     .drop { background-color: #e3f2fd; cursor: pointer;}
+    .item:active { transform: scale(1.05); background: #e0f7fa;}
     .correcto { background-color: #c8f7c5 !important; border-color: #2ecc71 !important; animation: pop 0.3s;}
     .incorrecto { background-color: #f7c5c5 !important; border-color: #e74c3c !important; animation: shake 0.3s;}
     @keyframes pop { 0% { transform: scale(1);} 50% { transform: scale(1.1);} 100% { transform: scale(1);}
@@ -22,38 +78,151 @@
     @keyframes shake { 0% { transform: translateX(0);} 25% { transform: translateX(-6px);} 50% { transform: translateX(6px);} 75% { transform: translateX(-6px);} 100% { transform: translateX(0);}
     }
     .seleccionado { background: #ffe082 !important; border-color: #fbc02d !important;}
-    #resultado { text-align: center; margin-top: 20px; font-weight: bold; font-size: 18px; color: #1b5e20;}
-    #mensajes { text-align: center; margin-top: 14px; font-size: 20px; font-weight: bold; color: #0277bd; min-height: 28px; height: 28px; transition: color 0.2s;}
-    #ranking { text-align: center; margin-top: 18px; font-size: 17px; color: #1b5e20; background: #c8e6c9; border: 2px solid #2e7d32; border-radius: 10px; padding: 10px 12px 10px 12px; max-width: 700px; margin-left: auto; margin-right: auto;}
-    #reiniciar { display: block; margin: 25px auto 0 auto; padding: 10px 25px; background: #2e7d32; color: white; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s;}
-    #reiniciar:disabled { background: #bdbdbd; cursor: not-allowed;}
-    .input-group { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;}
-    .input-label { color: #1b5e20; font-size: 17px; }
-    .input-text { padding: 8px; font-size: 16px; border-radius: 5px; border: 1.5px solid #a5d6a7; }
-    #btnIniciar { padding: 10px 22px; background: #0277bd; color: white; font-size: 17px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s; margin-left: 10px;}
-    #btnIniciar:disabled { background: #bdbdbd; cursor: not-allowed;}
-    /* Cambia el color del cursor cuando está sobre los residuos */
     .item:hover, .item:focus {
       cursor: pointer;
-      /* Puntero de color personalizado usando SVG */
       cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="12" cy="12" r="10" stroke="black" stroke-width="2" fill="%23ffe082"/></svg>') 12 12, pointer;
-      /* fallback a pointer por si no soporta cursor SVG */
+    }
+    #resultado {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #1b5e20;
+    }
+    #mensajes {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #0277bd;
+      min-height: 28px;
+      height: 28px;
+      transition: color 0.2s;
+    }
+    #ranking {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 17px;
+      color: #1b5e20;
+      background: #c8e6c9;
+      border: 2px solid #2e7d32;
+      border-radius: 10px;
+      padding: 10px 12px 10px 12px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #reiniciar {
+      display: block;
+      margin: 25px auto 0 auto;
+      padding: 10px 25px;
+      background: #2e7d32;
+      color: white;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+    #reiniciar:disabled { background: #bdbdbd; cursor: not-allowed;}
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .input-label {
+      color: #1b5e20;
+      font-size: 17px;
+      margin-bottom: 3px;
+      font-weight: bold;
+      align-self: flex-start;
+    }
+    .input-text {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1.5px solid #a5d6a7;
+      width: 100%;
+      max-width: 320px;
+      box-sizing: border-box;
+    }
+    #btnIniciar {
+      padding: 10px 22px;
+      background: #0277bd;
+      color: white;
+      font-size: 17px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.2s;
+      margin-top: 6px;
+    }
+    #btnIniciar:disabled { background: #bdbdbd; cursor: not-allowed;}
+    .firma-desarrollador {
+      position: fixed;
+      right: 14px;
+      bottom: 10px;
+      color: #999;
+      font-size: 11px;
+      font-style: italic;
+      opacity: 0.6;
+      z-index: 999;
+      pointer-events: none;
+      user-select: none;
+      background: transparent;
+      letter-spacing: 0.2px;
     }
     @media (max-width: 700px) {
-      .contenedor {flex-direction: column;}
-      .columna {width:100%;}
+      .contenedor {
+        grid-template-columns: 1fr 1fr;
+        max-width: 100vw;
+        min-width: 0;
+        gap: 7px;
+      }
+      .columna {
+        min-width: 0;
+      }
+      .input-text {
+        max-width: 99vw;
+      }
+    }
+    @media (max-width: 600px) {
+      .firma-desarrollador {
+        font-size: 10px;
+        right: 5px;
+        bottom: 4px;
+      }
+    }
+    @media (max-width: 420px) {
+      .contenedor {
+        max-width: 99vw;
+        gap: 3px;
+      }
+      .item, .drop {
+        font-size: 13px;
+        padding: 7px;
+        min-height: 38px;
+      }
+      .titulo-columna {
+        font-size: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Arrastrá cada residuo a su categoría correspondiente</h1>
+    <h1>Seleccione cada residuo y su categoría correspondiente</h1>
   </header>
 
   <div id="timer">Tiempo restante: 30</div>
 
   <div class="input-group" id="inputGroup">
-    <label class="input-label" for="grupoInput">Grupo Pimass:</label>
+    <label class="input-label" for="grupoInput">Ingrese su Grupo PIMASS:</label>
     <input class="input-text" type="text" id="grupoInput" maxlength="32" autocomplete="off" placeholder="Ej: MASS" />
     <button id="btnIniciar">Iniciar</button>
   </div>
@@ -73,16 +242,16 @@
   <div id="mensajes"></div>
   <div id="ranking"></div>
   <button id="reiniciar" disabled>Reiniciar Juego</button>
-
+  <div class="firma-desarrollador">versión beta <span style="font-style:italic;">Carlos Ortiz</span></div>
   <!-- Sonidos base64 -->
   <audio id="sonido-ok" src="data:audio/wav;base64,UklGRpABAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYABAACAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICA"></audio>
   <audio id="sonido-error" src="data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYwAAACAgICAgICAf3+AgH9/gIB/f4CAf3+AgH9/gIB/f4CAf3+AgICAf3+AgH9/gIA="></audio>
-
   <script>
     const residuosBase = [
       { id: "res_pinturas", texto: "Pinturas" },
       { id: "res_aceites", texto: "Aceites en desuso" },
-      { id: "res_pilas_plomo", texto: "Baterias de Plomo" },
+      { id: "res_pilas_agotadas", texto: "Baterias electricas agotadas" },
+      { id: "res_contienen_plomo", texto: "Compuestos de plomo" },
       { id: "res_solventes", texto: "Solventes" },
       { id: "res_trapos", texto: "Trapos/Tambores con aceite" },
       { id: "res_pilas_zinc", texto: "Pilas y Baterias de Zinc" },
@@ -93,7 +262,8 @@
       { dataRes: "res_aceites res_trapos", texto: "Y8" },
       { dataRes: "res_solventes", texto: "Y6" },
       { dataRes: "res_trapos res_aceites", texto: "Y8" },
-      { dataRes: "res_pilas_plomo", texto: "Y31/Y34" },
+      { dataRes: "res_contienen_plomo", texto: "Y31" },
+      { dataRes: "res_pilas_agotadas", texto: "Y34" },
       { dataRes: "res_pinturas", texto: "Y12" },
       { dataRes: "res_lamparas", texto: "Y29" }
     ];
@@ -199,7 +369,7 @@
     function iniciarPartida() {
       grupo = grupoInput.value.trim();
       if (!grupo) {
-        mensajes.textContent = "Por favor ingresa el Grupo Pimass.";
+        mensajes.textContent = "Por favor ingrese su Grupo PIMASS.";
         mensajes.style.color = "#d32f2f";
         return;
       }
