@@ -73,8 +73,7 @@
     }
 
     .oculto {
-      visibility: hidden;
-      pointer-events: none;
+      display: none;
     }
 
     #resultado {
@@ -166,7 +165,7 @@
         if (aceptadas.includes(id)) {
           drop.textContent = dragged.textContent + ' ✅';
           drop.classList.add('correcto');
-          dragged.classList.add('oculto'); // 👈 solución: ocultar sin romper el layout
+          dragged.classList.add('oculto');
           correctas++;
         } else {
           drop.classList.add('incorrecto');
