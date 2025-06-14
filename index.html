@@ -27,13 +27,6 @@
       margin-top: 10px;
     }
 
-    .contenedor {
-      display: grid;
-      grid-template-columns: 300px 60px 300px;
-      gap: 20px;
-      align-items: center;
-    }
-
     .titulo-columna {
       display: grid;
       grid-template-columns: 300px 60px 300px;
@@ -45,6 +38,13 @@
     .titulo-columna div {
       text-align: center;
       font-size: 16px;
+    }
+
+    .contenedor {
+      display: grid;
+      grid-template-columns: 300px 60px 300px;
+      gap: 20px;
+      align-items: center;
     }
 
     .item, .drop {
@@ -70,6 +70,11 @@
     .incorrecto {
       background-color: #f7c5c5 !important;
       border-color: #e74c3c !important;
+    }
+
+    .oculto {
+      visibility: hidden;
+      pointer-events: none;
     }
 
     #resultado {
@@ -161,7 +166,7 @@
         if (aceptadas.includes(id)) {
           drop.textContent = dragged.textContent + ' ✅';
           drop.classList.add('correcto');
-          dragged.remove();
+          dragged.classList.add('oculto'); // 👈 solución: ocultar sin romper el layout
           correctas++;
         } else {
           drop.classList.add('incorrecto');
@@ -181,3 +186,7 @@
   </script>
 </body>
 </html>
+
+<!--
+  Este código HTML crea un juego interactivo donde los usuarios deben arrastrar residuos a sus categorías correspondientes.
+  Utiliza HTML, CSS y JavaScript para la funcionalidad de arrastrar y soltar, así como para el conteo de respuestas correctas e incorrectas.
