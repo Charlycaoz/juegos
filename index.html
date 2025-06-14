@@ -1,67 +1,36 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Juego de Residuos y Corrientes Y</title>
+  <title>Juego de Residuos y Corrientes</title>
   <style>
-    body {
-      font-family: sans-serif;
-      background: linear-gradient(to bottom right, #e6f4ea, #d0f0ff);
-      margin: 0;
-      padding: 20px;
-    }
-    header {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    h1 {
-      color: #2e7d32;
-      font-size: 22px;
-      margin-top: 10px;
-    }
-    .contenedor {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      width: 100%;
-      max-width: 1000px;
-      margin: auto;
-    }
-    .columna {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 45%;
-    }
-    .item, .drop {
-      padding: 10px;
-      background-color: #ffffff;
-      border: 2px solid #a5d6a7;
-      border-radius: 6px;
-      cursor: grab;
-      text-align: center;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-    }
-    .drop {
-      min-height: 40px;
-      background-color: #e3f2fd;
-    }
-    .correcto {
-      background-color: #c8f7c5 !important;
-      border-color: #2ecc71 !important;
-    }
-    .incorrecto {
-      background-color: #f7c5c5 !important;
-      border-color: #e74c3c !important;
-    }
-    #resultado {
-      text-align: center;
-      margin-top: 20px;
-      font-weight: bold;
-      font-size: 18px;
-      color: #1b5e20;
-    }
+    body { font-family: sans-serif; background: linear-gradient(to bottom right, #e6f4ea, #d0f0ff); margin: 0; padding: 20px;}
+    header { text-align: center; margin-bottom: 20px;}
+    h1 { color: #2e7d32; font-size: 22px; margin-top: 10px;}
+    #timer { text-align: center; font-size: 24px; font-weight: bold; color: #1b5e20; margin-bottom: 15px;}
+    .contenedor { display: flex; justify-content: space-between; flex-wrap: wrap; width: 100%; max-width: 1000px; margin: auto;}
+    .columna { display: flex; flex-direction: column; gap: 10px; width: 45%;}
+    .titulo-columna { text-align: center; font-weight: bold; color: #1b5e20; font-size: 18px; margin-bottom: 8px; letter-spacing: 1px;}
+    .item, .drop { width: 100%; min-height: 48px; padding: 12px; background-color: #fff; border: 2px solid #a5d6a7; border-radius: 6px; cursor: grab; text-align: center; box-shadow: 2px 2px 5px rgba(0,0,0,0.1); box-sizing: border-box; font-size: 16px; transition: background 0.2s, border-color 0.2s, transform 0.2s; user-select: none;}
+    .item:active { transform: scale(1.05); background: #e0f7fa;}
+    .drop { background-color: #e3f2fd; cursor: pointer;}
+    .correcto { background-color: #c8f7c5 !important; border-color: #2ecc71 !important; animation: pop 0.3s;}
+    .incorrecto { background-color: #f7c5c5 !important; border-color: #e74c3c !important; animation: shake 0.3s;}
+    @keyframes pop { 0% { transform: scale(1);} 50% { transform: scale(1.1);} 100% { transform: scale(1);}}
+    @keyframes shake { 0% { transform: translateX(0);} 25% { transform: translateX(-6px);} 50% { transform: translateX(6px);} 75% { transform: translateX(-6px);} 100% { transform: translateX(0);}}
+    #resultado { text-align: center; margin-top: 20px; font-weight: bold; font-size: 18px; color: #1b5e20;}
+    #mensajes { text-align: center; margin-top: 14px; font-size: 20px; font-weight: bold; color: #0277bd; min-height: 28px; height: 28px; transition: color 0.2s;}
+    #ranking { text-align: center; margin-top: 18px; font-size: 17px; color: #1b5e20; background: #c8e6c9; border: 2px solid #2e7d32; border-radius: 10px; padding: 10px 12px 10px 12px; max-width: 700px; margin-left: auto; margin-right: auto;}
+    #reiniciar { display: block; margin: 25px auto 0 auto; padding: 10px 25px; background: #2e7d32; color: white; font-size: 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s;}
+    #reiniciar:disabled { background: #bdbdbd; cursor: not-allowed;}
+    .input-group { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap;}
+    .input-label { color: #1b5e20; font-size: 17px; }
+    .input-text { padding: 8px; font-size: 16px; border-radius: 5px; border: 1.5px solid #a5d6a7; }
+    #btnIniciar { padding: 10px 22px; background: #0277bd; color: white; font-size: 17px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s; margin-left: 10px;}
+    #btnIniciar:disabled { background: #bdbdbd; cursor: not-allowed;}
+    #btnExportar { margin-left: 10px; padding: 10px 22px; background: #388e3c; color: white; font-size: 17px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.2s;}
+    #btnExportar:disabled { background: #bdbdbd; cursor: not-allowed;}
   </style>
 </head>
 <body>
@@ -69,78 +38,363 @@
     <h1>Arrastrá cada residuo a su categoría correspondiente</h1>
   </header>
 
+  <div id="timer">Tiempo restante: 30</div>
+
+  <div class="input-group">
+    <label class="input-label" for="plantaInput">Planta:</label>
+    <input class="input-text" type="text" id="plantaInput" maxlength="24" autocomplete="off" placeholder="Ej: Cardales" />
+    <label class="input-label" for="sectorInput">Sector:</label>
+    <input class="input-text" type="text" id="sectorInput" maxlength="24" autocomplete="off" placeholder="Ej: MASS" />
+    <label class="input-label" for="turnoInput">Turno:</label>
+    <input class="input-text" type="text" id="turnoInput" maxlength="16" autocomplete="off" placeholder="Ej: A" />
+    <button id="btnIniciar">Iniciar</button>
+    <button id="btnExportar" title="Exportar ranking a CSV">Exportar Ranking</button>
+  </div>
+
   <div class="contenedor">
-    <div class="columna" id="residuos">
-      <div class="item" draggable="true" id="res_pinturas">Pinturas</div>
-      <div class="item" draggable="true" id="res_aceites">Aceites en desuso</div>
-      <div class="item" draggable="true" id="res_pilas_plomo">Baterias de Plomo</div>
-      <div class="item" draggable="true" id="res_solventes">Solventes</div>
-      <div class="item" draggable="true" id="res_trapos">Trapos/Tambores con aceite</div>
-      <div class="item" draggable="true" id="res_pilas_zinc">Pilas y Baterias de Zinc</div>
-      <div class="item" draggable="true" id="res_lamparas">Lámparas de tubo fluorescente</div>
+    <div class="columna">
+      <div class="titulo-columna">Residuos</div>
+      <div id="residuos"></div>
     </div>
     <div class="columna">
-      <div class="drop" data-res="res_pilas_zinc">Y23</div>
-      <div class="drop" data-res="res_aceites res_trapos">Y8</div>
-      <div class="drop" data-res="res_solventes">Y6</div>
-      <div class="drop" data-res="res_trapos res_aceites">Y8</div>
-      <div class="drop" data-res="res_pilas_plomo">Y31/Y34</div>
-      <div class="drop" data-res="res_pinturas">Y12</div>
-      <div class="drop" data-res="res_lamparas">Y29</div>
+      <div class="titulo-columna">Clasificación Corriente</div>
+      <div id="corrientes"></div>
     </div>
   </div>
 
   <div id="resultado">Correctas: 0 | Incorrectas: 0</div>
+  <div id="mensajes"></div>
+  <div id="ranking"></div>
+  <button id="reiniciar" disabled>Reiniciar Juego</button>
+
+  <!-- Sonidos base64 -->
+  <audio id="sonido-ok" src="data:audio/wav;base64,UklGRpABAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYABAACAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICA"></audio>
+  <audio id="sonido-error" src="data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYwAAACAgICAgICAf3+AgH9/gIB/f4CAf3+AgH9/gIB/f4CAf3+AgICAf3+AgH9/gIA="></audio>
 
   <script>
-    const items = document.querySelectorAll('.item');
-    const drops = document.querySelectorAll('.drop');
-    const resultado = document.getElementById('resultado');
+    // --- Configuración inicial de residuos y drops ---
+    const residuosBase = [
+      { id: "res_pinturas", texto: "Pinturas" },
+      { id: "res_aceites", texto: "Aceites en desuso" },
+      { id: "res_pilas_plomo", texto: "Baterias de Plomo" },
+      { id: "res_solventes", texto: "Solventes" },
+      { id: "res_trapos", texto: "Trapos/Tambores con aceite" },
+      { id: "res_pilas_zinc", texto: "Pilas y Baterias de Zinc" },
+      { id: "res_lamparas", texto: "Lámparas de tubo fluorescente" }
+    ];
+    const dropsBase = [
+      { dataRes: "res_pilas_zinc", texto: "Y23" },
+      { dataRes: "res_aceites res_trapos", texto: "Y8" },
+      { dataRes: "res_solventes", texto: "Y6" },
+      { dataRes: "res_trapos res_aceites", texto: "Y8" },
+      { dataRes: "res_pilas_plomo", texto: "Y31/Y34" },
+      { dataRes: "res_pinturas", texto: "Y12" },
+      { dataRes: "res_lamparas", texto: "Y29" }
+    ];
+
+    // --- Variables de juego ---
     let correctas = 0;
     let incorrectas = 0;
+    let tiempo = 30;
+    let intervalo = null;
+    let juegoActivo = false;
+    let tiempoFinal = null; // Para ranking
+    let puntaje = 0;
+    let planta = "";
+    let sector = "";
+    let turno = "";
 
-    items.forEach(item => {
-      item.addEventListener('dragstart', e => {
-        e.dataTransfer.setData('text/plain', e.target.id);
+    const residuosColumna = document.getElementById('residuos');
+    const corrientesColumna = document.getElementById('corrientes');
+    const resultado = document.getElementById('resultado');
+    const timer = document.getElementById('timer');
+    const btnReiniciar = document.getElementById('reiniciar');
+    const mensajes = document.getElementById('mensajes');
+    const ranking = document.getElementById('ranking');
+    const sonidoOk = document.getElementById('sonido-ok');
+    const sonidoError = document.getElementById('sonido-error');
+    const plantaInput = document.getElementById('plantaInput');
+    const sectorInput = document.getElementById('sectorInput');
+    const turnoInput = document.getElementById('turnoInput');
+    const btnIniciar = document.getElementById('btnIniciar');
+    const btnExportar = document.getElementById('btnExportar');
+
+    // Mensajes motivadores
+    const mensajesOk = [
+      "¡Excelente!", "¡Muy bien!", "¡Correcto!", "¡Genial!", "¡Así se hace!", "¡Sigue así!", "¡Buen trabajo!"
+    ];
+    const mensajesError = [
+      "¡Sigue intentando!", "¡No te rindas!", "¡Intenta de nuevo!", "¡Casi!", "¡Ánimo!", "¡Ups, prueba otra vez!"
+    ];
+    const mensajesFin = [
+      "¡Eres un crack del reciclaje!",
+      "¡Fantástico, todo correcto!",
+      "¡Felicitaciones, completaste el reto!",
+      "¡Muy bien hecho, sigue cuidando el planeta!"
+    ];
+
+    // --- Mezclar arrays (Fisher-Yates) ---
+    function mezclarArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+
+    // --- Ranking de plantas (localStorage) ---
+    function actualizarRanking() {
+      let saved = localStorage.getItem('rankingPlantas');
+      let rankingPlantas = [];
+      if (saved) rankingPlantas = JSON.parse(saved);
+      rankingPlantas.sort((a, b) => b.puntaje - a.puntaje || a.tiempo - b.tiempo);
+      let texto = "<b>Ranking de plantas/sectores/turnos</b><br><table style='width:100%;margin-top:7px;margin-bottom:2px'><tr><th>Planta</th><th>Sector</th><th>Turno</th><th>Puntaje</th><th>Tiempo</th></tr>";
+      rankingPlantas.slice(0, 15).forEach(e =>
+        texto += `<tr><td>${e.planta}</td><td>${e.sector}</td><td>${e.turno}</td><td>${e.puntaje}</td><td>${e.tiempo}s</td></tr>`
+      );
+      texto += "</table>";
+      ranking.innerHTML = texto;
+    }
+
+    function guardarEnRankingLocal(planta, sector, turno, puntaje, tiempo) {
+      if (!planta || !sector || !turno) return;
+      let saved = localStorage.getItem('rankingPlantas');
+      let rankingPlantas = [];
+      if (saved) rankingPlantas = JSON.parse(saved);
+      let found = rankingPlantas.find(e =>
+        e.planta.toLowerCase() === planta.toLowerCase() &&
+        e.sector.toLowerCase() === sector.toLowerCase() &&
+        e.turno.toLowerCase() === turno.toLowerCase()
+      );
+      if (found) {
+        if (puntaje > found.puntaje || (puntaje === found.puntaje && tiempo < found.tiempo)) {
+          found.puntaje = puntaje;
+          found.tiempo = tiempo;
+        }
+      } else {
+        rankingPlantas.push({ planta, sector, turno, puntaje, tiempo });
+      }
+      localStorage.setItem('rankingPlantas', JSON.stringify(rankingPlantas));
+      actualizarRanking();
+    }
+
+    // --- Exportar ranking a CSV ---
+    function exportarRankingCSV() {
+      let saved = localStorage.getItem('rankingPlantas');
+      if (!saved) return;
+      let ranking = JSON.parse(saved);
+      let csv = "Planta,Sector,Turno,Puntaje,Tiempo\n";
+      ranking.forEach(e => {
+        csv += `"${e.planta}","${e.sector}","${e.turno}",${e.puntaje},${e.tiempo}\n`;
       });
+      let blob = new Blob([csv], {type: 'text/csv'});
+      let a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = "ranking.csv";
+      a.click();
+    }
+    btnExportar.addEventListener('click', exportarRankingCSV);
+
+    // --- Función para inicializar el juego ---
+    function inicializarJuego() {
+      correctas = 0;
+      incorrectas = 0;
+      tiempo = 30;
+      puntaje = 0;
+      tiempoFinal = null;
+      juegoActivo = false;
+      resultado.textContent = "Correctas: 0 | Incorrectas: 0";
+      mensajes.textContent = "";
+      timer.textContent = "Tiempo restante: 30";
+      btnReiniciar.disabled = true;
+      residuosColumna.innerHTML = '';
+      corrientesColumna.innerHTML = '';
+      plantaInput.value = "";
+      sectorInput.value = "";
+      turnoInput.value = "";
+      plantaInput.disabled = false;
+      sectorInput.disabled = false;
+      turnoInput.disabled = false;
+      btnIniciar.disabled = false;
+      actualizarRanking();
+    }
+
+    // --- Iniciar partida cuando hay planta, sector y turno ---
+    function iniciarPartida() {
+      planta = plantaInput.value.trim();
+      sector = sectorInput.value.trim();
+      turno = turnoInput.value.trim();
+      if (!planta || !sector || !turno) {
+        mensajes.textContent = "Por favor ingresa la planta, el sector y el turno.";
+        mensajes.style.color = "#d32f2f";
+        return;
+      }
+      mensajes.textContent = "";
+      plantaInput.disabled = true;
+      sectorInput.disabled = true;
+      turnoInput.disabled = true;
+      btnIniciar.disabled = true;
+      juegoActivo = true;
+
+      // Mezclar los arrays
+      const residuosData = [...residuosBase];
+      const dropsData = [...dropsBase];
+      mezclarArray(residuosData);
+      mezclarArray(dropsData);
+
+      // Limpiar columnas
+      residuosColumna.innerHTML = '';
+      corrientesColumna.innerHTML = '';
+
+      // Insertar items
+      residuosData.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'item';
+        div.id = item.id;
+        div.draggable = true;
+        div.textContent = item.texto;
+        residuosColumna.appendChild(div);
+      });
+
+      // Insertar drops
+      dropsData.forEach(drop => {
+        const div = document.createElement('div');
+        div.className = 'drop';
+        div.dataset.res = drop.dataRes;
+        div.textContent = drop.texto;
+        corrientesColumna.appendChild(div);
+      });
+
+      activarDragDrop();
+      iniciarCuentaRegresiva();
+    }
+
+    // --- Drag & Drop ---
+    function activarDragDrop() {
+      const items = document.querySelectorAll('.item');
+      const drops = document.querySelectorAll('.drop');
+
+      items.forEach(item => {
+        item.addEventListener('dragstart', e => {
+          if (!juegoActivo) { e.preventDefault(); return; }
+          e.dataTransfer.setData('text/plain', e.target.id);
+        });
+      });
+
+      drops.forEach(drop => {
+        drop.addEventListener('dragover', e => {
+          if (!juegoActivo) return;
+          e.preventDefault();
+          drop.style.borderColor = '#3498db';
+        });
+
+        drop.addEventListener('dragleave', () => {
+          drop.style.borderColor = '#a5d6a7';
+        });
+
+        drop.addEventListener('drop', e => {
+          if (!juegoActivo) return;
+          e.preventDefault();
+          drop.style.borderColor = '#a5d6a7';
+
+          const id = e.dataTransfer.getData('text');
+          const dragged = document.getElementById(id);
+          const aceptadas = drop.dataset.res.split(" ");
+
+          if (!dragged) return; // En caso de arrastres múltiples
+
+          if (aceptadas.includes(id)) {
+            drop.textContent = dragged.textContent + ' ✅';
+            drop.classList.add('correcto');
+            dragged.remove();
+            correctas++;
+            puntaje += 10;
+            resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
+            mensajes.textContent = mensajesOk[Math.floor(Math.random() * mensajesOk.length)];
+            mensajes.style.color = "#388e3c";
+            sonidoOk.currentTime = 0; sonidoOk.play();
+          } else {
+            drop.classList.add('incorrecto');
+            drop.textContent += ' ❌';
+            incorrectas++;
+            puntaje -= 5; // Penalización por error
+            resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
+            mensajes.textContent = mensajesError[Math.floor(Math.random() * mensajesError.length)];
+            mensajes.style.color = "#d32f2f";
+            sonidoError.currentTime = 0; sonidoError.play();
+            setTimeout(() => {
+              drop.classList.remove('incorrecto');
+              drop.textContent = drop.textContent.replace(' ❌','');
+              mensajes.textContent = "";
+            }, 1200);
+          }
+
+          if (correctas === residuosBase.length) {
+            finalizarJuego(true);
+          }
+        });
+      });
+    }
+
+    // --- Cuenta regresiva ---
+    function iniciarCuentaRegresiva() {
+      clearInterval(intervalo);
+      intervalo = setInterval(() => {
+        if (!juegoActivo) return;
+        tiempo--;
+        timer.textContent = `Tiempo restante: ${tiempo}`;
+        if (tiempo <= 0) {
+          finalizarJuego(false);
+        }
+      }, 1000);
+    }
+
+    // --- Finalizar juego ---
+    function finalizarJuego(completado) {
+      juegoActivo = false;
+      clearInterval(intervalo);
+      tiempoFinal = 30 - tiempo;
+      if (completado) {
+        resultado.textContent += " 🎉 ¡Felicitaciones! Completaste el juego.";
+        mensajes.textContent = mensajesFin[Math.floor(Math.random() * mensajesFin.length)];
+        mensajes.style.color = "#0277bd";
+        timer.textContent = "¡Juego completado!";
+        puntaje += Math.max(0, (100 - incorrectas*10 - tiempoFinal));
+        guardarEnRankingLocal(planta, sector, turno, puntaje, tiempoFinal);
+      } else {
+        timer.textContent = "¡Tiempo agotado!";
+        resultado.textContent += " ⏰ Tiempo terminado.";
+        mensajes.textContent = "¡El tiempo se terminó! ¡Intenta superarte!";
+        mensajes.style.color = "#d32f2f";
+        guardarEnRankingLocal(planta, sector, turno, puntaje, 30);
+      }
+      btnReiniciar.disabled = false;
+      plantaInput.disabled = false;
+      sectorInput.disabled = false;
+      turnoInput.disabled = false;
+      btnIniciar.disabled = false;
+    }
+
+    // --- Botón reiniciar ---
+    btnReiniciar.addEventListener('click', () => {
+      inicializarJuego();
     });
 
-    drops.forEach(drop => {
-      drop.addEventListener('dragover', e => {
-        e.preventDefault();
-        drop.style.borderColor = '#3498db';
-      });
-
-      drop.addEventListener('dragleave', () => {
-        drop.style.borderColor = '#a5d6a7';
-      });
-
-      drop.addEventListener('drop', e => {
-        e.preventDefault();
-        const id = e.dataTransfer.getData('text');
-        const dragged = document.getElementById(id);
-        const aceptadas = drop.dataset.res.split(" ");
-
-        if (aceptadas.includes(id)) {
-          drop.textContent = dragged.textContent + ' ✅';
-          drop.classList.add('correcto');
-          dragged.remove();
-          correctas++;
-        } else {
-          drop.classList.add('incorrecto');
-          drop.textContent += ' ❌';
-          incorrectas++;
-          setTimeout(() => drop.classList.remove('incorrecto'), 1000);
-        }
-
-        resultado.textContent = Correctas: ${correctas} | Incorrectas: ${incorrectas};
-        drop.style.borderColor = '#a5d6a7';
-
-        if (correctas === 8) {
-          resultado.textContent += " 🎉 ¡Felicitaciones! Completaste el juego.";
-        }
-      });
+    // --- Botón iniciar ---
+    btnIniciar.addEventListener('click', () => {
+      if (!juegoActivo) iniciarPartida();
     });
+    plantaInput.addEventListener('keyup', function(e) {
+      if (e.key === "Enter" && !juegoActivo) iniciarPartida();
+    });
+    sectorInput.addEventListener('keyup', function(e) {
+      if (e.key === "Enter" && !juegoActivo) iniciarPartida();
+    });
+    turnoInput.addEventListener('keyup', function(e) {
+      if (e.key === "Enter" && !juegoActivo) iniciarPartida();
+    });
+
+    // --- Iniciar el juego al cargar ---
+    window.onload = inicializarJuego;
   </script>
 </body>
 </html>
