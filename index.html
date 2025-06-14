@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Juego de Residuos y Corrientes Y</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: linear-gradient(to bottom right, #e6f4ea, #d0f0ff);
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    header img {
+      height: 60px;
+      background-color: transparent;
+    }
+    h1 {
+      color: #2e7d32;
+      font-size: 22px;
+      margin-top: 10px;
+    }
+    .contenedor {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+    }
+    .columna {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 45%;
+    }
+    .item, .drop {
+      padding: 10px;
+      background-color: #ffffff;
+      border: 2px solid #a5d6a7;
+      border-radius: 6px;
+      cursor: grab;
+      text-align: center;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    }
+    .drop {
+      min-height: 40px;
+      background-color: #e3f2fd;
+    }
+    .correcto {
+      background-color: #c8f7c5 !important;
+      border-color: #2ecc71 !important;
+    }
+    .incorrecto {
+      background-color: #f7c5c5 !important;
+      border-color: #e74c3c !important;
+    }
+    #resultado {
+      text-align: center;
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 18px;
+      color: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="logo_vasa.png" alt="Logo VASA">
+    <h1>Arrastrá cada residuo a su categoría correspondiente</h1>
+  </header>
+
+  <div class="contenedor">
+    <div class="columna" id="residuos">
+      <div class="item" draggable="true" id="res_pinturas">Pinturas</div>
+      <div class="item" draggable="true" id="res_raee">RAEEs</div>
+      <div class="item" draggable="true" id="res_barros">Barros del Sistema de Tratamiento</div>
+      <div class="item" draggable="true" id="res_aceites">Aceites en desuso</div>
+      <div class="item" draggable="true" id="res_pilas_plomo">Pilas y Baterias de Plomo</div>
+      <div class="item" draggable="true" id="res_solventes">Solventes</div>
+      <div class="item" draggable="true" id="res_trapos">Trapos/Tambores con aceite</div>
+      <div class="item" draggable="true" id="res_pilas_zinc">Pilas y Baterias de Zinc</div>
+      <div class="item" draggable="true" id="res_lamparas">Lámparas tubo</div>
+    </div>
+    <div class="columna">
+      <div class="drop" data-res="res_pilas_zinc">Y23</div>
+      <div class="drop" data-res="res_barros">Y18</div>
+      <div class="drop" data-res="res_aceites res_trapos">Y8</div>
+      <div class="drop" data-res="res_solventes">Y6</div>
+      <div class="drop" data-res="res_trapos res_aceites">Y8</div>
+      <div class="drop" data-res="res_pilas_plomo">Y31/Y34</div>
+      <div class="drop" data-res="res_pinturas">Y12</div>
+      <div class="drop" data-res="res_raee">Y22</div>
+      <div class="drop" data-res="res_lamparas">Y29</div>
+    </div>
+  </div>
+
+  <div id="resultado">Correctas: 0 | Incorrectas: 0</div>
+
+  <script>
+    const items = document.querySelectorAll('.item');
+    const drops = document.querySelectorAll('.drop');
+    const resultado = document.getElementById('resultado');
+    let correctas = 0;
+    let incorrectas = 0;
+
+    items.forEach(item => {
+      item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text/plain', e.target.id);
+      });
+    });
+
+    drops.forEach(drop => {
+      drop.addEventListener('dragover', e => {
+        e.preventDefault();
+        drop.style.borderColor = '#3498db';
+      });
+
+      drop.addEventListener('dragleave', () => {
+        drop.style.borderColor = '#a5d6a7';
+      });
+
+      drop.addEventListener('drop', e => {
+        e.preventDefault();
+        const id = e.dataTransfer.getData('text');
+        const dragged = document.getElementById(id);
+        const aceptadas = drop.dataset.res.split(" ");
+
+        if (aceptadas.includes(id)) {
+          drop.textContent = dragged.textContent + ' ✅';
+          drop.classList.add('correcto');
+          dragged.remove();
+          correctas++;
+        } else {
+          drop.classList.add('incorrecto');
+          drop.textContent += ' ❌';
+          incorrectas++;
+          setTimeout(() => drop.classList.remove('incorrecto'), 1000);
+        }
+
+        resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
+        drop.style.borderColor = '#a5d6a7';
+
+        if (correctas === 9) {
+          resultado.textContent += " 🎉 ¡Felicitaciones! Completaste el juego.";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
