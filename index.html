@@ -27,27 +27,24 @@
       margin-top: 10px;
     }
 
-    .titulo-columna {
-      font-weight: bold;
-      color: #1b5e20;
-      text-align: center;
-      grid-column: span 3;
-      display: grid;
-      grid-template-columns: 300px 60px 300px;
-      margin-bottom: 10px;
-    }
-
-    .titulo-columna div {
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
     .contenedor {
       display: grid;
       grid-template-columns: 300px 60px 300px;
       gap: 20px;
       align-items: center;
+    }
+
+    .titulo-columna {
+      display: grid;
+      grid-template-columns: 300px 60px 300px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #1b5e20;
+    }
+
+    .titulo-columna div {
+      text-align: center;
+      font-size: 16px;
     }
 
     .item, .drop {
@@ -58,19 +55,11 @@
       cursor: grab;
       text-align: center;
       box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
-      width: 100%;
-      min-height: 40px;
-      box-sizing: border-box;
     }
 
     .drop {
+      min-height: 40px;
       background-color: #e3f2fd;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
 
     .correcto {
@@ -170,13 +159,13 @@
         const aceptadas = drop.dataset.res.split(" ");
 
         if (aceptadas.includes(id)) {
-          drop.innerHTML = `<span>${dragged.textContent} ✅</span>`;
+          drop.textContent = dragged.textContent + ' ✅';
           drop.classList.add('correcto');
           dragged.remove();
           correctas++;
         } else {
           drop.classList.add('incorrecto');
-          drop.innerHTML += ' ❌';
+          drop.textContent += ' ❌';
           incorrectas++;
           setTimeout(() => drop.classList.remove('incorrecto'), 1000);
         }
