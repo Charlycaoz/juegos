@@ -17,8 +17,11 @@
     .drop { background-color: #e3f2fd; cursor: pointer;}
     .correcto { background-color: #c8f7c5 !important; border-color: #2ecc71 !important; animation: pop 0.3s;}
     .incorrecto { background-color: #f7c5c5 !important; border-color: #e74c3c !important; animation: shake 0.3s;}
-    @keyframes pop { 0% { transform: scale(1);} 50% { transform: scale(1.1);} 100% { transform: scale(1);}}
-    @keyframes shake { 0% { transform: translateX(0);} 25% { transform: translateX(-6px);} 50% { transform: translateX(6px);} 75% { transform: translateX(-6px);} 100% { transform: translateX(0);}}
+    @keyframes pop { 0% { transform: scale(1);} 50% { transform: scale(1.1);} 100% { transform: scale(1);}
+    }
+    @keyframes shake { 0% { transform: translateX(0);} 25% { transform: translateX(-6px);} 50% { transform: translateX(6px);} 75% { transform: translateX(-6px);} 100% { transform: translateX(0);}
+    }
+    .seleccionado { background: #ffe082 !important; border-color: #fbc02d !important;}
     #resultado { text-align: center; margin-top: 20px; font-weight: bold; font-size: 18px; color: #1b5e20;}
     #mensajes { text-align: center; margin-top: 14px; font-size: 20px; font-weight: bold; color: #0277bd; min-height: 28px; height: 28px; transition: color 0.2s;}
     #ranking { text-align: center; margin-top: 18px; font-size: 17px; color: #1b5e20; background: #c8e6c9; border: 2px solid #2e7d32; border-radius: 10px; padding: 10px 12px 10px 12px; max-width: 700px; margin-left: auto; margin-right: auto;}
@@ -46,7 +49,7 @@
     <label class="input-label" for="sectorInput">Sector:</label>
     <input class="input-text" type="text" id="sectorInput" maxlength="24" autocomplete="off" placeholder="Ej: MASS" />
     <label class="input-label" for="turnoInput">Turno:</label>
-    <input class="input-text" type="text" id="turnoInput" maxlength="16" autocomplete="off" placeholder="Ej: A" />
+    <input class="input-text" type="text" id="turnoInput" maxlength="16" autocomplete="off" placeholder="Ej: A,B,C,D..." />
     <button id="btnIniciar">Iniciar</button>
     <button id="btnExportar" title="Exportar ranking a CSV">Exportar Ranking</button>
   </div>
@@ -103,6 +106,7 @@
     let planta = "";
     let sector = "";
     let turno = "";
+    let seleccionadoId = null; // para touch
 
     const residuosColumna = document.getElementById('residuos');
     const corrientesColumna = document.getElementById('corrientes');
@@ -119,7 +123,6 @@
     const btnIniciar = document.getElementById('btnIniciar');
     const btnExportar = document.getElementById('btnExportar');
 
-    // Mensajes motivadores
     const mensajesOk = [
       "¡Excelente!", "¡Muy bien!", "¡Correcto!", "¡Genial!", "¡Así se hace!", "¡Sigue así!", "¡Buen trabajo!"
     ];
@@ -133,7 +136,6 @@
       "¡Muy bien hecho, sigue cuidando el planeta!"
     ];
 
-    // --- Mezclar arrays (Fisher-Yates) ---
     function mezclarArray(array) {
       for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -141,7 +143,6 @@
       }
     }
 
-    // --- Ranking de plantas (localStorage) ---
     function actualizarRanking() {
       let saved = localStorage.getItem('rankingPlantas');
       let rankingPlantas = [];
@@ -177,7 +178,6 @@
       actualizarRanking();
     }
 
-    // --- Exportar ranking a CSV ---
     function exportarRankingCSV() {
       let saved = localStorage.getItem('rankingPlantas');
       if (!saved) return;
@@ -194,7 +194,6 @@
     }
     btnExportar.addEventListener('click', exportarRankingCSV);
 
-    // --- Función para inicializar el juego ---
     function inicializarJuego() {
       correctas = 0;
       incorrectas = 0;
@@ -202,6 +201,7 @@
       puntaje = 0;
       tiempoFinal = null;
       juegoActivo = false;
+      seleccionadoId = null;
       resultado.textContent = "Correctas: 0 | Incorrectas: 0";
       mensajes.textContent = "";
       timer.textContent = "Tiempo restante: 30";
@@ -218,7 +218,6 @@
       actualizarRanking();
     }
 
-    // --- Iniciar partida cuando hay planta, sector y turno ---
     function iniciarPartida() {
       planta = plantaInput.value.trim();
       sector = sectorInput.value.trim();
@@ -235,17 +234,14 @@
       btnIniciar.disabled = true;
       juegoActivo = true;
 
-      // Mezclar los arrays
       const residuosData = [...residuosBase];
       const dropsData = [...dropsBase];
       mezclarArray(residuosData);
       mezclarArray(dropsData);
 
-      // Limpiar columnas
       residuosColumna.innerHTML = '';
       corrientesColumna.innerHTML = '';
 
-      // Insertar items
       residuosData.forEach(item => {
         const div = document.createElement('div');
         div.className = 'item';
@@ -255,7 +251,6 @@
         residuosColumna.appendChild(div);
       });
 
-      // Insertar drops
       dropsData.forEach(drop => {
         const div = document.createElement('div');
         div.className = 'drop';
@@ -268,74 +263,94 @@
       iniciarCuentaRegresiva();
     }
 
-    // --- Drag & Drop ---
     function activarDragDrop() {
       const items = document.querySelectorAll('.item');
       const drops = document.querySelectorAll('.drop');
 
+      // --- Desktop: Drag & Drop clásico ---
       items.forEach(item => {
         item.addEventListener('dragstart', e => {
           if (!juegoActivo) { e.preventDefault(); return; }
           e.dataTransfer.setData('text/plain', e.target.id);
         });
       });
-
       drops.forEach(drop => {
         drop.addEventListener('dragover', e => {
           if (!juegoActivo) return;
           e.preventDefault();
           drop.style.borderColor = '#3498db';
         });
-
         drop.addEventListener('dragleave', () => {
           drop.style.borderColor = '#a5d6a7';
         });
-
         drop.addEventListener('drop', e => {
           if (!juegoActivo) return;
           e.preventDefault();
           drop.style.borderColor = '#a5d6a7';
-
           const id = e.dataTransfer.getData('text');
-          const dragged = document.getElementById(id);
-          const aceptadas = drop.dataset.res.split(" ");
+          procesarIntento(id, drop);
+        });
+      });
 
-          if (!dragged) return; // En caso de arrastres múltiples
-
-          if (aceptadas.includes(id)) {
-            drop.textContent = dragged.textContent + ' ✅';
-            drop.classList.add('correcto');
-            dragged.remove();
-            correctas++;
-            puntaje += 10;
-            resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
-            mensajes.textContent = mensajesOk[Math.floor(Math.random() * mensajesOk.length)];
-            mensajes.style.color = "#388e3c";
-            sonidoOk.currentTime = 0; sonidoOk.play();
-          } else {
-            drop.classList.add('incorrecto');
-            drop.textContent += ' ❌';
-            incorrectas++;
-            puntaje -= 5; // Penalización por error
-            resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
-            mensajes.textContent = mensajesError[Math.floor(Math.random() * mensajesError.length)];
-            mensajes.style.color = "#d32f2f";
-            sonidoError.currentTime = 0; sonidoError.play();
-            setTimeout(() => {
-              drop.classList.remove('incorrecto');
-              drop.textContent = drop.textContent.replace(' ❌','');
-              mensajes.textContent = "";
-            }, 1200);
+      // --- Mobile: Tocar para seleccionar y luego para asignar ---
+      items.forEach(item => {
+        item.addEventListener('touchstart', function(e) {
+          if (!juegoActivo) return;
+          e.preventDefault();
+          if (seleccionadoId) {
+            document.getElementById(seleccionadoId).classList.remove('seleccionado');
           }
-
-          if (correctas === residuosBase.length) {
-            finalizarJuego(true);
+          seleccionadoId = this.id;
+          this.classList.add('seleccionado');
+        });
+      });
+      drops.forEach(drop => {
+        drop.addEventListener('touchstart', function(e) {
+          if (!juegoActivo) return;
+          e.preventDefault();
+          if (seleccionadoId) {
+            procesarIntento(seleccionadoId, this);
+            document.getElementById(seleccionadoId).classList.remove('seleccionado');
+            seleccionadoId = null;
           }
         });
       });
     }
 
-    // --- Cuenta regresiva ---
+    function procesarIntento(id, drop) {
+      const dragged = document.getElementById(id);
+      if (!dragged) return;
+      const aceptadas = drop.dataset.res.split(" ");
+      if (aceptadas.includes(id)) {
+        drop.textContent = dragged.textContent + ' ✅';
+        drop.classList.add('correcto');
+        dragged.remove();
+        correctas++;
+        puntaje += 10;
+        resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
+        mensajes.textContent = mensajesOk[Math.floor(Math.random() * mensajesOk.length)];
+        mensajes.style.color = "#388e3c";
+        sonidoOk.currentTime = 0; sonidoOk.play();
+      } else {
+        drop.classList.add('incorrecto');
+        drop.textContent += ' ❌';
+        incorrectas++;
+        puntaje -= 5;
+        resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
+        mensajes.textContent = mensajesError[Math.floor(Math.random() * mensajesError.length)];
+        mensajes.style.color = "#d32f2f";
+        sonidoError.currentTime = 0; sonidoError.play();
+        setTimeout(() => {
+          drop.classList.remove('incorrecto');
+          drop.textContent = drop.textContent.replace(' ❌','');
+          mensajes.textContent = "";
+        }, 1200);
+      }
+      if (correctas === residuosBase.length) {
+        finalizarJuego(true);
+      }
+    }
+
     function iniciarCuentaRegresiva() {
       clearInterval(intervalo);
       intervalo = setInterval(() => {
@@ -348,7 +363,6 @@
       }, 1000);
     }
 
-    // --- Finalizar juego ---
     function finalizarJuego(completado) {
       juegoActivo = false;
       clearInterval(intervalo);
@@ -374,12 +388,9 @@
       btnIniciar.disabled = false;
     }
 
-    // --- Botón reiniciar ---
     btnReiniciar.addEventListener('click', () => {
       inicializarJuego();
     });
-
-    // --- Botón iniciar ---
     btnIniciar.addEventListener('click', () => {
       if (!juegoActivo) iniciarPartida();
     });
@@ -393,7 +404,6 @@
       if (e.key === "Enter" && !juegoActivo) iniciarPartida();
     });
 
-    // --- Iniciar el juego al cargar ---
     window.onload = inicializarJuego;
   </script>
 </body>
