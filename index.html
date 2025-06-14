@@ -72,24 +72,20 @@
   <div class="contenedor">
     <div class="columna" id="residuos">
       <div class="item" draggable="true" id="res_pinturas">Pinturas</div>
-      <div class="item" draggable="true" id="res_raee">RAEEs</div>
-      <div class="item" draggable="true" id="res_barros">Barros del Sistema de Tratamiento</div>
       <div class="item" draggable="true" id="res_aceites">Aceites en desuso</div>
-      <div class="item" draggable="true" id="res_pilas_plomo">Pilas y Baterias de Plomo</div>
+      <div class="item" draggable="true" id="res_pilas_plomo">Baterias de Plomo</div>
       <div class="item" draggable="true" id="res_solventes">Solventes</div>
       <div class="item" draggable="true" id="res_trapos">Trapos/Tambores con aceite</div>
       <div class="item" draggable="true" id="res_pilas_zinc">Pilas y Baterias de Zinc</div>
-      <div class="item" draggable="true" id="res_lamparas">Lámparas tubo</div>
+      <div class="item" draggable="true" id="res_lamparas">Lámparas de tubo fluorescente</div>
     </div>
     <div class="columna">
       <div class="drop" data-res="res_pilas_zinc">Y23</div>
-      <div class="drop" data-res="res_barros">Y18</div>
       <div class="drop" data-res="res_aceites res_trapos">Y8</div>
       <div class="drop" data-res="res_solventes">Y6</div>
       <div class="drop" data-res="res_trapos res_aceites">Y8</div>
       <div class="drop" data-res="res_pilas_plomo">Y31/Y34</div>
       <div class="drop" data-res="res_pinturas">Y12</div>
-      <div class="drop" data-res="res_raee">Y22</div>
       <div class="drop" data-res="res_lamparas">Y29</div>
     </div>
   </div>
@@ -140,7 +136,7 @@
         resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
         drop.style.borderColor = '#a5d6a7';
 
-        if (correctas === 9) {
+        if (correctas === 8) {
           resultado.textContent += " 🎉 ¡Felicitaciones! Completaste el juego.";
         }
       });
