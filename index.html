@@ -133,13 +133,19 @@
       gap: 6px;
       margin-bottom: 12px;
       flex-wrap: wrap;
+      width: 100%;
+      max-width: 540px;
+      margin-left: auto;
+      margin-right: auto;
     }
     .input-label {
       color: #1b5e20;
       font-size: 17px;
       margin-bottom: 3px;
       font-weight: bold;
-      align-self: flex-start;
+      align-self: center;
+      text-align: center;
+      width: 100%;
     }
     .input-text {
       padding: 8px;
@@ -190,6 +196,9 @@
       .input-text {
         max-width: 99vw;
       }
+      .input-group {
+        max-width: 99vw;
+      }
     }
     @media (max-width: 600px) {
       .firma-desarrollador {
@@ -219,7 +228,7 @@
     <h1>Seleccione cada residuo y su categoría correspondiente</h1>
   </header>
 
-  <div id="timer">Tiempo restante: 30</div>
+  <div id="timer">Tiempo restante: 50</div>
 
   <div class="input-group" id="inputGroup">
     <label class="input-label" for="grupoInput">Ingrese su Grupo PIMASS:</label>
@@ -242,7 +251,7 @@
   <div id="mensajes"></div>
   <div id="ranking"></div>
   <button id="reiniciar" disabled>Reiniciar Juego</button>
-  <div class="firma-desarrollador">versión beta <span style="font-style:italic;">Carlos Ortiz</span></div>
+  <div class="firma-desarrollador">versión 1 <span style="font-style:italic;">Carlos Ortiz</span></div>
   <!-- Sonidos base64 -->
   <audio id="sonido-ok" src="data:audio/wav;base64,UklGRpABAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYABAACAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICAAAAAgICA"></audio>
   <audio id="sonido-error" src="data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YYwAAACAgICAgICAf3+AgH9/gIB/f4CAf3+AgH9/gIB/f4CAf3+AgICAf3+AgH9/gIA="></audio>
@@ -250,27 +259,25 @@
     const residuosBase = [
       { id: "res_pinturas", texto: "Pinturas" },
       { id: "res_aceites", texto: "Aceites en desuso" },
-      { id: "res_pilas_agotadas", texto: "Baterias electricas agotadas" },
       { id: "res_contienen_plomo", texto: "Compuestos de plomo" },
       { id: "res_solventes", texto: "Solventes" },
       { id: "res_trapos", texto: "Trapos/Tambores con aceite" },
-      { id: "res_pilas_zinc", texto: "Pilas y Baterias de Zinc" },
+      { id: "res_pilas_zinc", texto: "Pilas" },
       { id: "res_lamparas", texto: "Lámparas de tubo fluorescente" }
     ];
     const dropsBase = [
-      { dataRes: "res_pilas_zinc", texto: "Y23" },
-      { dataRes: "res_aceites res_trapos", texto: "Y8" },
-      { dataRes: "res_solventes", texto: "Y6" },
-      { dataRes: "res_trapos res_aceites", texto: "Y8" },
-      { dataRes: "res_contienen_plomo", texto: "Y31" },
-      { dataRes: "res_pilas_agotadas", texto: "Y34" },
-      { dataRes: "res_pinturas", texto: "Y12" },
-      { dataRes: "res_lamparas", texto: "Y29" }
+      { dataRes: "res_pilas_zinc", texto: "Y23 Compuesto de zinc." },
+      { dataRes: "res_aceites res_trapos", texto: "Y8 Desechos de aceites minerales no aptos para el uso a que estaban destinadas." },
+      { dataRes: "res_solventes", texto: "Y6 Desechos resultantes de la producción, la preparación y la utilización de disolventes orgánicos." },
+      { dataRes: "res_trapos res_aceites", texto: "Y8 Desechos de aceites minerales no aptos para el uso a que estaban destinadas." },
+      { dataRes: "res_contienen_plomo", texto: "Y31 Plomo, compuesto de plomo." },
+      { dataRes: "res_pinturas", texto: "Y12 Desechos resultantes de la producción, preparación y utilización de tintas, colorantes, pigmentos, pinturas, lacas o barnices." },
+      { dataRes: "res_lamparas", texto: "Y29 Mercurio, compuesto de mercurio." }
     ];
 
     let correctas = 0;
     let incorrectas = 0;
-    let tiempo = 30;
+    let tiempo = 50;
     let intervalo = null;
     let juegoActivo = false;
     let tiempoFinal = null;
