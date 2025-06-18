@@ -51,7 +51,8 @@
     }
     .item, .drop {
       width: 100%;
-      min-height: 48px;
+      min-height: 60px;
+      max-height: 70px;
       padding: 12px;
       background-color: #fff;
       border: 2px solid #a5d6a7;
@@ -65,9 +66,12 @@
       user-select: none;
       margin: 0;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       word-break: break-word;
+      /* Para igualar tamaño con flex:1 (sobre todo en desktop) */
+      flex: 1 1 0;
     }
     .drop { background-color: #e3f2fd; cursor: pointer;}
     .item:active { transform: scale(1.05); background: #e0f7fa;}
@@ -81,6 +85,19 @@
     .item:hover, .item:focus {
       cursor: pointer;
       cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><circle cx="12" cy="12" r="10" stroke="black" stroke-width="2" fill="%23ffe082"/></svg>') 12 12, pointer;
+    }
+    .corriente-titulo {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 3px;
+      color: #2e7d32;
+      line-height: 1;
+      display: block;
+    }
+    .corriente-desc {
+      font-size: 14px;
+      color: #333;
+      font-weight: normal;
     }
     #resultado {
       text-align: center;
@@ -173,10 +190,10 @@
       position: fixed;
       right: 14px;
       bottom: 10px;
-      color: #999;
+      color: #111;
       font-size: 11px;
       font-style: italic;
-      opacity: 0.6;
+      opacity: 0.75;
       z-index: 999;
       pointer-events: none;
       user-select: none;
@@ -206,6 +223,12 @@
         right: 5px;
         bottom: 4px;
       }
+      .item, .drop {
+        min-height: 48px;
+        max-height: 56px;
+        font-size: 15px;
+        padding: 8px;
+      }
     }
     @media (max-width: 420px) {
       .contenedor {
@@ -216,6 +239,7 @@
         font-size: 13px;
         padding: 7px;
         min-height: 38px;
+        max-height: 46px;
       }
       .titulo-columna {
         font-size: 15px;
@@ -265,14 +289,15 @@
       { id: "res_pilas_zinc", texto: "Pilas" },
       { id: "res_lamparas", texto: "Lámparas de tubo fluorescente" }
     ];
+    // Corrientes con Y en negrita y descripción separada
     const dropsBase = [
-      { dataRes: "res_pilas_zinc", texto: "Y23 Compuesto de zinc." },
-      { dataRes: "res_aceites res_trapos", texto: "Y8 Desechos de aceites minerales no aptos para el uso a que estaban destinadas." },
-      { dataRes: "res_solventes", texto: "Y6 Desechos resultantes de la producción, la preparación y la utilización de disolventes orgánicos." },
-      { dataRes: "res_trapos res_aceites", texto: "Y8 Desechos de aceites minerales no aptos para el uso a que estaban destinadas." },
-      { dataRes: "res_contienen_plomo", texto: "Y31 Plomo, compuesto de plomo." },
-      { dataRes: "res_pinturas", texto: "Y12 Desechos resultantes de la producción, preparación y utilización de tintas, colorantes, pigmentos, pinturas, lacas o barnices." },
-      { dataRes: "res_lamparas", texto: "Y29 Mercurio, compuesto de mercurio." }
+      { dataRes: "res_pilas_zinc", y: "Y23", desc: "Compuesto de zinc." },
+      { dataRes: "res_aceites res_trapos", y: "Y8", desc: "Desechos de aceites minerales no aptos para el uso a que estaban destinadas." },
+      { dataRes: "res_solventes", y: "Y6", desc: "Desechos resultantes de la producción, la preparación y la utilización de disolventes orgánicos." },
+      { dataRes: "res_trapos res_aceites", y: "Y8", desc: "Desechos de aceites minerales no aptos para el uso a que estaban destinadas." },
+      { dataRes: "res_contienen_plomo", y: "Y31", desc: "Plomo, compuesto de plomo." },
+      { dataRes: "res_pinturas", y: "Y12", desc: "Desechos resultantes de la producción, preparación y utilización de tintas, colorantes, pigmentos, pinturas, lacas o barnices." },
+      { dataRes: "res_lamparas", y: "Y29", desc: "Mercurio, compuesto de mercurio." }
     ];
 
     let correctas = 0;
@@ -354,14 +379,14 @@
     function inicializarJuego() {
       correctas = 0;
       incorrectas = 0;
-      tiempo = 30;
+      tiempo = 50;
       puntaje = 0;
       tiempoFinal = null;
       juegoActivo = false;
       seleccionadoId = null;
       resultado.textContent = "Correctas: 0 | Incorrectas: 0";
       mensajes.textContent = "";
-      timer.textContent = "Tiempo restante: 30";
+      timer.textContent = "Tiempo restante: 50";
       btnReiniciar.disabled = true;
       residuosColumna.innerHTML = '';
       corrientesColumna.innerHTML = '';
@@ -408,12 +433,23 @@
         const div = document.createElement('div');
         div.className = 'drop';
         div.dataset.res = drop.dataRes;
-        div.textContent = drop.texto;
+        // Corriente Y en negrita y la descripción debajo
+        div.innerHTML = `<span class="corriente-titulo">${drop.y}</span><span class="corriente-desc">${drop.desc}</span>`;
         corrientesColumna.appendChild(div);
       });
 
+      // Igualar la cantidad de filas en ambas columnas para que los rectángulos mantengan tamaño igual
+      igualarAlturas(residuosColumna, corrientesColumna);
+
       activarDragDrop();
       iniciarCuentaRegresiva();
+    }
+
+    // Asegura que ambas columnas tengan el mismo número de cajas y tamaño
+    function igualarAlturas(colA, colB) {
+      // No hace falta nada: con flex:1 en .item/.drop ya se iguala el tamaño.
+      // Si quisieras igualar la cantidad de cajas aunque falten, podrías agregar elementos vacíos aquí.
+      // Pero para este diseño, no es necesario.
     }
 
     function activarDragDrop() {
@@ -469,8 +505,11 @@
       const dragged = document.getElementById(id);
       if (!dragged) return;
       const aceptadas = drop.dataset.res.split(" ");
+      // El Y en negrita arriba debe mantenerse
+      const dropYHtml = drop.querySelector('.corriente-titulo')?.outerHTML || '';
+      const dropDescHtml = drop.querySelector('.corriente-desc')?.outerHTML || '';
       if (aceptadas.includes(id)) {
-        drop.textContent = dragged.textContent + ' ✅';
+        drop.innerHTML = `${dropYHtml}<span>${dragged.textContent} ✅</span>${dropDescHtml}`;
         drop.classList.add('correcto');
         dragged.remove();
         correctas++;
@@ -481,7 +520,7 @@
         sonidoOk.currentTime = 0; sonidoOk.play();
       } else {
         drop.classList.add('incorrecto');
-        drop.textContent += ' ❌';
+        drop.innerHTML = `${dropYHtml}<span>${dragged.textContent} ❌</span>${dropDescHtml}`;
         incorrectas++;
         puntaje -= 5;
         resultado.textContent = `Correctas: ${correctas} | Incorrectas: ${incorrectas}`;
@@ -490,7 +529,7 @@
         sonidoError.currentTime = 0; sonidoError.play();
         setTimeout(() => {
           drop.classList.remove('incorrecto');
-          drop.textContent = drop.textContent.replace(' ❌','');
+          drop.innerHTML = `${dropYHtml}${dropDescHtml}`;
           mensajes.textContent = "";
         }, 1200);
       }
@@ -514,7 +553,7 @@
     function finalizarJuego(completado) {
       juegoActivo = false;
       clearInterval(intervalo);
-      tiempoFinal = 30 - tiempo;
+      tiempoFinal = 50 - tiempo;
       if (completado) {
         resultado.textContent += " 🎉 ¡Felicitaciones! Completaste el juego.";
         mensajes.textContent = mensajesFin[Math.floor(Math.random() * mensajesFin.length)];
@@ -527,7 +566,7 @@
         resultado.textContent += " ⏰ Tiempo terminado.";
         mensajes.textContent = "¡El tiempo se terminó! ¡Intenta superarte!";
         mensajes.style.color = "#d32f2f";
-        guardarEnRankingLocal(grupo, puntaje, 30);
+        guardarEnRankingLocal(grupo, puntaje, 50);
       }
       btnReiniciar.disabled = false;
       grupoInput.disabled = false;
@@ -549,7 +588,3 @@
   </script>
 </body>
 </html>
-
-<!--
-  Este código HTML crea un juego interactivo donde los usuarios deben arrastrar residuos a sus categorías correspondientes.
-  Utiliza HTML, CSS y JavaScript para la funcionalidad de arrastrar y soltar, así como para el conteo de respuestas correctas e incorrectas.
