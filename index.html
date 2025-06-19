@@ -318,7 +318,7 @@
 <div class="main-container">
   <h1>Seleccione cada residuo y su categoría correspondiente</h1>
   <div class="info-box">
-    Tienes 30 segundos.<br>
+    Tienes 50 segundos.<br>
     Los residuos avanzan de derecha a izquierda. Haz clic en la corriente Y correspondiente abajo antes de que desaparezca.<br>
     ¡Suma puntos por cada acierto! No pierdas tus vidas: arrancas con 5 y pierdes una por cada error. El juego termina si te quedas sin vidas o se termina el tiempo.
   </div>
@@ -331,7 +331,7 @@
   <div class="main-box">
     <div class="status-bar">
       <span>Vidas: <span class="vidas" id="vidas">5</span></span>
-      <span>Tiempo: <span class="timer" id="timer">30</span>s</span>
+      <span>Tiempo: <span class="timer" id="timer">50</span>s</span>
       <span>Puntaje: <span class="puntaje" id="puntaje">0</span></span>
     </div>
     <div class="zona-superior" id="zona-superior"></div>
@@ -366,7 +366,7 @@
     { id: "Y12", nombre: "Y12", desc: "Desechos resultantes de la producción, preparación y utilización de tintas, colorantes, pigmentos, pinturas, lacas o barnices." },
     { id: "Y29", nombre: "Y29", desc: "Mercurio, compuesto de mercurio." }
   ];
-  let tiempoRestante = 30;
+  let tiempoRestante = 50;
   let vidas = 5;
   let puntaje = 0;
   let enJuego = false;
@@ -375,7 +375,7 @@
   let trackWidth = 0;
   let residuoWidth = 0;
   let animStart = 0;
-  let animDuracion = 5200;
+  let animDuracion = 20500;
   let intervaloAnimacion = null;
   let intervaloTiempo = null;
   let selectedDiv = null;
@@ -418,7 +418,7 @@
     }
   }
   function resetGame() {
-    tiempoRestante = 30;
+    tiempoRestante = 50;
     vidas = 5;
     puntaje = 0;
     correctas = 0;
@@ -551,7 +551,7 @@
     incorrectas++;
     resumenBar.innerHTML = `Correctas: <span class="good">${correctas}</span> | Incorrectas: <span class="bad">${incorrectas}</span>`;
     if (vidas <= 0) finalizarJuego();
-    else setTimeout(() => siguienteResiduo(), 300);
+    else setTimeout(() => siguienteResiduo(), 500);
   }
   function finalizarJuego() {
     enJuego = false;
