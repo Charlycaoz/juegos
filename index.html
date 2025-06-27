@@ -375,7 +375,7 @@
   let trackWidth = 0;
   let residuoWidth = 0;
   let animStart = 0;
-  let animDuracion = 20500;
+  let animDuracion = 15000;
   let intervaloAnimacion = null;
   let intervaloTiempo = null;
   let selectedDiv = null;
@@ -593,16 +593,17 @@
     localStorage.setItem("ranking_pimass_horizontal", JSON.stringify(ranking));
   }
   function mostrarRanking() {
-    let data = localStorage.getItem("ranking_pimass_horizontal");
-    let ranking = [];
-    if (data) ranking = JSON.parse(data);
-    let html = "<b>Ranking de Grupos Pimass</b><br><table><tr><th>Grupo</th><th>Puntaje</th><th>Tiempo</th></tr>";
-    ranking.slice(0, 10).forEach(x => {
-      html += `<tr><td>${x.grupo}</td><td>${x.puntaje}</td><td>${typeof x.tiempo === "number" ? x.tiempo + "s" : '-'}</td></tr>`;
-    });
-    html += "</table>";
-    rankingDiv.innerHTML = html;
-  }
+  let data = localStorage.getItem("ranking_pimass_horizontal");
+  let ranking = [];
+  if (data) ranking = JSON.parse(data);
+  // Quitar la columna "Tiempo" del encabezado y de las filas
+  let html = "<b>Ranking de Grupos Pimass</b><br><table><tr><th>Grupo</th><th>Puntaje</th></tr>";
+  ranking.slice(0, 10).forEach(x => {
+    html += `<tr><td>${x.grupo}</td><td>${x.puntaje}</td></tr>`;
+  });
+  html += "</table>";
+  rankingDiv.innerHTML = html;
+}
   startBtn.onclick = iniciarJuego;
   restartBtn.onclick = resetGame;
   grupoInput.addEventListener("keydown", function(e){
