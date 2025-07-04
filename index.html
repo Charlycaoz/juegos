@@ -76,7 +76,7 @@
       border: 1.5px solid #b2dfdb;
       padding: 5px 10px;
       font-size: 1em;
-      width: 140px;
+      width: 180px;
       background: #e3f2fd;
       color: #22743b;
       font-weight: bold;
@@ -324,8 +324,8 @@
   </div>
   <div class="estado-titulo" id="estado-titulo"></div>
   <div class="group-row">
-    <label for="grupoInput">Ingrese su Grupo PIMASS:</label>
-    <input id="grupoInput" type="text" maxlength="24" autocomplete="off" placeholder="Ej: MASS" />
+    <label for="grupoInput">Nombre:</label>
+    <input id="grupoInput" type="text" maxlength="32" autocomplete="off" placeholder="Ej: Juan Pérez" pattern="^[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]{2,32}$" title="Ingrese nombre y apellido (puede usar espacios y acentos)" />
     <button id="start-btn">Iniciar</button>
   </div>
   <div class="main-box">
@@ -346,9 +346,6 @@
   <button id="restart-btn" style="display:none;">Reiniciar Juego</button>
 </div>
 <script>
-  // El código JS es el mismo de tu versión anterior
-  // (puedes copiar/pegar el script anterior aquí, ya cumple lo solicitado)
-  // ... (idéntico al anterior, no requiere cambios)
   const residuos = [
     { id: "res_pinturas", texto: "Pinturas", y: "Y12" },
     { id: "res_aceites", texto: "Aceites en desuso", y: "Y8" },
@@ -442,11 +439,13 @@
   }
   function iniciarJuego() {
     grupoValor = grupoInput.value.trim();
+    // Validar nombre y apellido: solo letras, acentos, espacios, mínimo 2 palabras
     const nombreValido = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+( [A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)+$/.test(grupoValor);
-    if (!grupoValor) {
+    if (!grupoValor || !nombreValido) {
       grupoInput.focus();
       grupoInput.style.borderColor = "#e53935";
-      grupoInput.placeholder = "Ingrese su nombre y apellido";
+      grupoInput.value = "";
+      grupoInput.placeholder = "Ingrese nombre y apellido";
       return;
     }
     grupoInput.style.borderColor = "#90caf9";
@@ -594,17 +593,17 @@
     localStorage.setItem("ranking_pimass_horizontal", JSON.stringify(ranking));
   }
   function mostrarRanking() {
-  let data = localStorage.getItem("ranking_pimass_horizontal");
-  let ranking = [];
-  if (data) ranking = JSON.parse(data);
-  // Quitar la columna "Tiempo" del encabezado y de las filas
-  let html = "<b>Ranking de Grupos Pimass</b><br><table><tr><th>Grupo</th><th>Puntaje</th></tr>";
-  ranking.slice(0, 10).forEach(x => {
-    html += `<tr><td>${x.grupo}</td><td>${x.puntaje}</td></tr>`;
-  });
-  html += "</table>";
-  rankingDiv.innerHTML = html;
-}
+    let data = localStorage.getItem("ranking_pimass_horizontal");
+    let ranking = [];
+    if (data) ranking = JSON.parse(data);
+    // Quitar la columna "Tiempo" del encabezado y de las filas
+    let html = "<b>Ranking</b><br><table><tr><th>Nombre</th><th>Puntaje</th></tr>";
+    ranking.slice(0, 10).forEach(x => {
+      html += `<tr><td>${x.grupo}</td><td>${x.puntaje}</td></tr>`;
+    });
+    html += "</table>";
+    rankingDiv.innerHTML = html;
+  }
   startBtn.onclick = iniciarJuego;
   restartBtn.onclick = resetGame;
   grupoInput.addEventListener("keydown", function(e){
