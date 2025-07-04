@@ -442,10 +442,11 @@
   }
   function iniciarJuego() {
     grupoValor = grupoInput.value.trim();
+    const nombreValido = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü]+( [A-Za-zÁÉÍÓÚáéíóúÑñÜü]+)+$/.test(grupoValor);
     if (!grupoValor) {
       grupoInput.focus();
       grupoInput.style.borderColor = "#e53935";
-      grupoInput.placeholder = "Ingrese su grupo";
+      grupoInput.placeholder = "Ingrese su nombre y apellido";
       return;
     }
     grupoInput.style.borderColor = "#90caf9";
